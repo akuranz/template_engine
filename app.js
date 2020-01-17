@@ -6,12 +6,38 @@ inquirer
   .prompt([
     {
       type: "input",
+      message: "Please build your team",
+      name: "prompt"
+    },
+    {
+      type: "input",
       message: "What is your manager's name?",
       name: "managerName"
+    },
+    {
+      type: "input",
+      message: "What is your manager's id?",
+      name: "managerId" //add error handling for repeat ids
+    },
+    {
+      type: "input",
+      message: "What is your manager's email?",
+      name: "managerEmail"
+    },
+    {
+      type: "input",
+      message: "What is your manager's office number?",
+      name: "managerOffice"
+    },
+    {
+      type: "list",
+      message: "Which type of team member would you like to add?",
+      name: "employeeType",
+      choices: ["Engineer", "Intern", "I don't want to add anymore employees"]
     }
   ])
   .then(function(res) {
-    if (res.managerName === "Abby") {
+    if (res.choices === "Engineer") {
       inquirer.prompt([
         {
           type: "input",
