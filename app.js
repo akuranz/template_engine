@@ -1,197 +1,185 @@
 // const fs = require("fs");
 // const axios = require("axios");
 const inquirer = require("inquirer");
+const Emp = require("./lib");
 
-inquirer
-  .prompt([
-    {
-      type: "input",
-      message: "Please build your team",
-      name: "prompt"
-    },
-    {
-      type: "input",
-      message: "What is your manager's name?",
-      name: "managerName"
-    },
-    {
-      type: "input",
-      message: "What is your manager's id?",
-      name: "managerId" //add error handling for repeat ids
-    },
-    {
-      type: "input",
-      message: "What is your manager's email?",
-      name: "managerEmail"
-    },
-    {
-      type: "input",
-      message: "What is your manager's office number?",
-      name: "managerOffice"
-    },
-    {
-      type: "list",
-      message: "Which type of team member would you like to add?",
-      name: "employeeType",
-      choices: ["Engineer", "Intern", "I don't want to add anymore employees"]
-    }
-  ])
-  .then(function(res) {
-    if (res.choices === "Engineer") {
-      inquirer.prompt([
+const idArray = [];
+const empArray = [];
+
+start();
+
+function start() {
+  function createManager() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is your manager's name?",
+          name: "managerName"
+        },
+        {
+          type: "input",
+          message: "What is your manager's id?",
+          name: "managerId", //add error handling for is NAN
+          validate: id => {
+            if (idArray.includes(id)) {
+              console.log("\nId already Taken");
+              return false;
+            }
+            return true;
+          }
+        },
+        {
+          type: "input",
+          message: "What is your manager's email?",
+          name: "managerEmail",
+          validate: inp => inp.includes("@") && inp[inp.length - 4] === "."
+        },
+        {
+          type: "input",
+          message: "What is your manager's office number?",
+          name: "managerOffice"
+        }
+      ])
+      .then(({ managerName, managerId, managerEmail, managerOffice }) => {
+        idArray.push(managerId);
+        empArray.push(
+          new Emp.Manager(managerName, managerId, managerEmail, managerOffice)
+        );
+        console.log(empArray);
+        chooseEmpType();
+      });
+  }
+
+  function chooseEmpType() {
+    inquirer
+      .prompt({
+        name: "type",
+        message: "What type of Employee would you like to create?",
+        type: "list",
+        choices: ["Engineer", "Intern", "I don't want to add anymore employees"]
+      })
+      .then(({ type }) => {
+        switch (type) {
+          case "Engineer":
+            return createEngineer();
+          case "Intern":
+            return createIntern();
+          case "I don't want to add anymore employees":
+            return buildTemplate();
+        }
+      });
+  }
+  function createEngineer() {
+    inquirer
+      .prompt([
         {
           type: "input",
           message: "What is your engineer's name?",
           name: "engineerName"
+        },
+        {
+          type: "input",
+          message: "What is your engineer's id?",
+          name: "engineerId", //add error handling for repeat ids
+          validate: id => {
+            if (idArray.includes(id)) {
+              console.log("\nId already Taken");
+              return false;
+            }
+            return true;
+          }
+        },
+        {
+          // test@gmail.com
+          type: "input",
+          message: "What is your engineer's email?",
+          name: "engineerEmail",
+          validate: inp => {
+            if (inp.includes("@") && inp[inp.length - 4] === ".") {
+              return true;
+            } else if (!inp.includes("@")) {
+              console.log('\n Must have "@" symbol!');
+              return false;
+            } else if (inp[inp.length - 4] !== ".") {
+              console.log("\n Must end in .com || .edu ||.org || etc");
+              return false;
+            }
+          }
+        },
+        {
+          type: "input",
+          message: "What is your engineer's GitHub username?",
+          name: "engineerUsername"
         }
-      ]);
-    }
-  });
-// function startPrompts() {
-//   function askQuestions() {
-//     inquirer
-//       .prompt([
-//         {
-//           type: "input",
-//           message: "Please build your team",
-//           name: "prompt"
-//         },
-//         {
-//           type: "input",
-//           message: "What is your manager's name?",
-//           name: "managerName"
-//         },
-//         {
-//           type: "input",
-//           message: "What is your manager's id?",
-//           name: "managerId" //add error handling for repeat ids
-//         },
-//         {
-//           type: "input",
-//           message: "What is your manager's email?",
-//           name: "managerEmail"
-//         },
-//         {
-//           type: "input",
-//           message: "What is your manager's office number?",
-//           name: "managerOffice"
-//         },
-//         {
-//           type: "list",
-//           message: "Which type of team member would you like to add?",
-//           name: "employeeType",
-//           choices: [
-//             "Engineer",
-//             "Intern",
-//             "I don't want to add anymore employees"
-//           ]
-//         }
-//       ])
-//       .then(res => {
-//         if (res.choices === "Engineer" || res.choices === "Intern") {
-//           askQuestions();
-//         }
-//       });
-//   }
-// }
+      ])
+      .then(({ engineerName, engineerId, engineerEmail, engineerUsername }) => {
+        idArray.push(engineerId);
+        empArray.push(
+          new Emp.Engineer(
+            engineerName,
+            engineerId,
+            engineerEmail,
+            engineerUsername
+          )
+        );
+        console.log(empArray);
+        chooseEmpType();
+      });
+  }
+  function createIntern() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is your intern's name?",
+          name: "internName"
+        },
+        {
+          type: "input",
+          message: "What is your intern's id?",
+          name: "internId", //add error handling for repeat ids
+          validate: id => {
+            if (idArray.includes(id)) {
+              console.log("\nId already Taken");
+              return false;
+            }
+            return true;
+          }
+        },
+        {
+          // test@gmail.com
+          type: "input",
+          message: "What is your intern's email?",
+          name: "engineerEmail",
+          validate: inp => {
+            if (inp.includes("@") && inp[inp.length - 4] === ".") {
+              return true;
+            } else if (!inp.includes("@")) {
+              console.log('\n Must have "@" symbol!');
+              return false;
+            } else if (inp[inp.length - 4] !== ".") {
+              console.log("\n Must end in .com || .edu ||.org || etc");
+              return false;
+            }
+          }
+        },
+        {
+          type: "input",
+          message: "What is your intern's school?",
+          name: "internSchool"
+        }
+      ])
+      .then(({ internName, internId, internEmail, internSchool }) => {
+        idArray.push(internId);
+        empArray.push(
+          new Emp.Intern(internName, internId, internEmail, internSchool)
+        );
+        console.log(empArray);
+        chooseEmpType();
+      });
+  }
+  function buildTemplate() {}
 
-// ----LONG WAY----
-// inquirer.prompt([
-//   {
-//     type: "input",
-//     message: "Please build your team",
-//     name: "prompt"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your manager's name?",
-//     name: "managerName"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your manager's id?",
-//     name: "managerId" //add error handling for repeat ids
-//   },
-//   {
-//     type: "input",
-//     message: "What is your manager's email?",
-//     name: "managerEmail"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your manager's office number?",
-//     name: "managerOffice"
-//   },
-//   {
-//     type: "list",
-//     message: "Which type of team member would you like to add?",
-//     name: "employeeType",
-//     choices: ["Engineer", "Intern", "I don't want to add anymore employees"]
-//   },
-//   {
-//     type: "input",
-//     message: "What is your engineer's name?",
-//     name: "engineerName",
-//     when: answers => answers.employeeType === "Engineer"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your engineer's id?",
-//     name: "engineerId", //add error handling for repeat ids
-//     when: answers => answers.employeeType === "Engineer"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your engineer's email?",
-//     name: "engineerEmail",
-//     when: answers => answers.employeeType === "Engineer"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your engineer's GitHub username?",
-//     name: "managerOffice",
-//     when: answers => answers.employeeType === "Engineer"
-//   },
-//   {
-//     type: "list",
-//     message: "Which type of team member would you like to add?",
-//     name: "employeeType",
-//     choices: ["Engineer", "Intern", "I don't want to add anymore employees"],
-//     when: answers => answers.employeeType === "Engineer"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your intern's name?",
-//     name: "internName",
-//     when: answers => answers.employeeType === "Intern"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your intern's id?",
-//     name: "internId", //add error handling for repeat ids
-//     when: answers => answers.employeeType === "Intern"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your intern's email?",
-//     name: "internEmail",
-//     when: answers => answers.employeeType === "Intern"
-//   },
-//   {
-//     type: "input",
-//     message: "What is your intern's school?",
-//     name: "internSchool",
-//     when: answers => answers.employeeType === "Intern"
-//   },
-//   {
-//     type: "list",
-//     message: "Which type of team member would you like to add?",
-//     name: "employeeType",
-//     choices: ["Engineer", "Intern", "I don't want to add anymore employees"],
-//     when: answers => answers.employeeType === "Intern"
-//   }
-// ]);
-//   .then(function(res) {
-//     console.log(res.employeeType);
-//   });
-//
+  createManager();
+}
