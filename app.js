@@ -2,6 +2,7 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 const Emp = require("./lib");
+const render = require("./lib/htmlRenderer");
 
 const idArray = [];
 const empArray = [];
@@ -180,12 +181,13 @@ function start() {
       });
   }
   function buildTemplate() {
-    function writeToFile(fileName, data) {}
+    const outputPath = path.resolve(__dirname, "output", "team.html");
+    fs.writeFile(outputPath, render(empArray), function(err) {
+      if (err) {
+        throw err;
+      }
+      console.log(render(empArray));
+    });
   }
-
   createManager();
 }
-
-const outputPath = path.resolve(__dirname, "output", "team.html");
-
-const render = require("./lib/htmlRenderer");
