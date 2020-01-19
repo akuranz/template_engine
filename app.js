@@ -1,6 +1,6 @@
-// const fs = require("fs");
-// const axios = require("axios");
 const inquirer = require("inquirer");
+const path = require("path");
+const fs = require("fs");
 const Emp = require("./lib");
 
 const idArray = [];
@@ -179,7 +179,13 @@ function start() {
         chooseEmpType();
       });
   }
-  function buildTemplate() {}
+  function buildTemplate() {
+    function writeToFile(fileName, data) {}
+  }
 
   createManager();
 }
+
+const outputPath = path.resolve(__dirname, "output", "team.html");
+
+const render = require("./lib/htmlRenderer");
