@@ -34,12 +34,29 @@ function start() {
           type: "input",
           message: "What is your manager's email?",
           name: "managerEmail",
-          validate: inp => inp.includes("@") && inp[inp.length - 4] === "."
+          validate: inp => {
+            if (inp.includes("@") && inp[inp.length - 4] === ".") {
+              return true;
+            } else if (!inp.includes("@")) {
+              console.log('\n Must have "@" symbol!');
+              return false;
+            } else if (inp[inp.length - 4] !== ".") {
+              console.log("\n Must end in .com || .edu ||.org || etc");
+              return false;
+            }
+          }
         },
         {
           type: "input",
           message: "What is your manager's office number?",
-          name: "managerOffice"
+          name: "managerOffice",
+          validate: managerOffice => {
+            if (!isNaN(managerOffice)) {
+              return true;
+            } else {
+              console.log("Must be a number!");
+            }
+          }
         }
       ])
       .then(({ managerName, managerId, managerEmail, managerOffice }) => {
@@ -149,7 +166,6 @@ function start() {
           }
         },
         {
-          // test@gmail.com
           type: "input",
           message: "What is your intern's email?",
           name: "engineerEmail",
