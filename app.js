@@ -51,10 +51,12 @@ function start() {
           message: "What is your manager's office number?",
           name: "managerOffice",
           validate: managerOffice => {
-            if (!isNaN(managerOffice)) {
+            if (!isNaN(managerOffice) && managerOffice.length === 10) {
               return true;
             } else {
-              console.log("Must be a number!");
+              console.log(
+                "\nMust be a 10 digit number with no special characters (ex. -)!"
+              );
             }
           }
         }
@@ -109,7 +111,6 @@ function start() {
           }
         },
         {
-          // test@gmail.com
           type: "input",
           message: "What is your engineer's email?",
           name: "engineerEmail",
@@ -168,7 +169,7 @@ function start() {
         {
           type: "input",
           message: "What is your intern's email?",
-          name: "engineerEmail",
+          name: "internEmail",
           validate: inp => {
             if (inp.includes("@") && inp[inp.length - 4] === ".") {
               return true;
@@ -202,7 +203,7 @@ function start() {
       if (err) {
         throw err;
       }
-      console.log(render(empArray));
+      console.log("You created your team!");
     });
   }
   createManager();
